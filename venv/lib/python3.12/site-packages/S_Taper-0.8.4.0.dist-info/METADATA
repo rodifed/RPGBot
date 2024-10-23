@@ -1,0 +1,83 @@
+Metadata-Version: 2.1
+Name: S_Taper
+Version: 0.8.4.0
+Summary: Simple write-read add-on to SQLite3
+Author: STaper_Admin
+Classifier: Programming Language :: Python :: 3.10
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: aiosqlite
+
+# Модуль для работы с таблицами в базе данных SQLite3
+
+Этот модуль предоставляет инструменты для работы с базами данных SQLite3. Класс Taper позволяет создавать, 
+записывать, читать и удалять данные из таблиц.
+
+## Класс `Taper`
+### Инициализация
+Для инициализации модуля и подключению его к базе данных, следует выполнить два шага.
+
+#### Шаг 1. Создание схемы будущей (или текущей) таблицы в базе данных.
+```python
+from s_taper.consts import *
+users_scheme = {
+    "название первого столбца": INT + KEY,
+    "название второго столбца": INT,
+    "название третьего столбца": TEXT,
+    "название четвертого столбца": FLT,
+    "название пятого столбца": BLN,
+}
+```
+#### Шаг 2. Создание экземпляра новой (или текущей) таблицы в базе данных.
+```python
+from s_taper import Taper
+# users = Taper("название таблицы", "путь до файла").create_table(схема таблицы)
+users = Taper("users", "data.db").create_table(users_scheme)
+```
+Теперь можно использовать все необходимые инструменты.
+
+### Методы класса `Poller`
+- `write(values: list | tuple = None, table_name: str = None)`: Записывает данные в таблицу.
+- `read(column_name: str, key: str | int)`: Читает данные из таблицы по заданному столбцу и ключу.
+- `read_all(table_name: str)`: Читает все данные из таблицы.
+- `delete_row(column_name: str, key: str | int, all_rows: bool)`: Удаляет строку(и) из таблицы.
+- `create_table(table: dict, table_name: str)`: Создает новую таблицу.
+- `drop_table(table_name: str)`: Удаляет таблицу из базы данных.
+- `execute(sql: str, fetchall=True)`: Выполняет произвольный SQL-запрос.
+
+### Пример записи данных
+```python
+users.write(values=["value1", "value2"])
+```
+
+### Пример чтения данных по ключу
+```python
+result = users.read(column_name="column_name", key="key_value")
+```
+
+### Пример чтения всех данных из таблицы
+```python
+all_data = users.read_all()
+```
+
+### Пример удаления строки по ключу
+```python
+users.delete_row(column_name="column_name", key="key_value")
+```
+### Пример создания новой таблицы
+```python
+new_table = users.create_table(table={"column1": "TEXT", "column2": "INT"})
+```
+
+### Пример удаления таблицы
+```python
+users.drop_table(table_name="example_table")
+```
+### Пример выполнения SQL-запроса
+```python
+result = users.execute(sql="SELECT * FROM example_table")
+```
+
+_Внешняя документация: [Ссылка](https://s-taper.readthedocs.io/ru/latest/index.html#module-s_taper)_
