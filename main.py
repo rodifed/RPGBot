@@ -134,7 +134,8 @@ def eating(msg, key, hp):
     heals.write([msg.chat.id, data])
     user[3] += int(hp)
     users.write(user)
-    print("Игрок поел")
+    bot.send_message(msg.chat.id, f"Ты поел {key}, +{hp} HP, теперь у тебя {user[3]} HP")
+    
     
     
 
