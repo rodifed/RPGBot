@@ -137,8 +137,6 @@ def eating(msg, key, hp):
     bot.send_message(msg.chat.id, f"Ты поел {key}, +{hp} HP, теперь у тебя {user[3]} HP")
     
     
-    
-
 @bot.message_handler(commands=["addheal"])
 def add_heal(msg: Message):
     _, heals_data = heals.read("user_id", msg.chat.id)
