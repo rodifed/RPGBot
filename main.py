@@ -7,6 +7,7 @@ from db import users, heals, locations
 from telebot.types import InlineKeyboardButton as IB
 from telebot.types import Message
 from dotenv import load_dotenv
+from fight import powers
 
 load_dotenv()
 token = os.getenv("token")
@@ -37,10 +38,11 @@ def register_3(msg: Message):
         return
     elif msg.text in ["Земля 🌍", "Вода 💦", "Огонь 🔥", "Воздух 🌬️"]:
         temp[msg.chat.id]["power"] = msg.text
+        hp, damage = powers[msg.text]
         users.write([msg.chat.id,
                     temp[msg.chat.id]["name"],
                     temp[msg.chat.id]["power"],
-                    0,0,10,0
+                    hp, damage, 10, 0
                     ])
         heals.write([
             msg.chat.id,
@@ -51,7 +53,23 @@ def register_3(msg: Message):
         bot.send_message(msg.chat.id, "Стихии %s не существует."%msg.text)
         register_2(msg)
         
-
+def formula(level, health, hp):
+    # (100 * (L/10)) // 2 - h
+    l = level
+    h = health
+    health_add_1 = (hp * (l/10)) // 2 - h
+    biggest = hp * (l/10) - h
+    if health_add_1 > 0:
+        return health_add_1
+    else:
+        return biggest
+    
+def sleep(msg: Message):
+    player = users.read("user_id", msg.chat.id)
+    player[3] = formula(player[6], player[3], powers[player[2]])
+    users.write()
+    
+    
 
 def is_new(msg: Message):
     result = users.read_all()
